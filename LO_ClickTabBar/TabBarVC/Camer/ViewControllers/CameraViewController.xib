@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CameraViewController">
+            <connections>
+                <outlet property="borderView" destination="wMD-M8-us5" id="ntB-29-qTt"/>
+                <outlet property="cameraViewController" destination="h0d-vE-OCq" id="kT7-on-fbw"/>
+                <outlet property="focusIndicator" destination="sI0-3p-uvF" id="C3i-1e-m8O"/>
+                <outlet property="lblTs" destination="djm-ur-fc4" id="fVL-0m-mEc"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="h0d-vE-OCq" customClass="IPDFCameraViewController">
+                    <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="focusIndicator" translatesAutoresizingMaskIntoConstraints="NO" id="sI0-3p-uvF">
+                            <rect key="frame" x="0.0" y="0.0" width="75" height="75"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="75" id="9fE-6m-D5Y"/>
+                                <constraint firstAttribute="width" constant="75" id="EnL-Fd-uwB"/>
+                            </constraints>
+                        </imageView>
+                        <button opaque="NO" alpha="0.69999998807907104" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2ET-B9-DKG">
+                            <rect key="frame" x="154" y="483" width="66" height="66"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="66" id="2hw-CE-yEl"/>
+                                <constraint firstAttribute="width" constant="66" id="kuQ-Jr-FLj"/>
+                            </constraints>
+                            <state key="normal" image="capture_button">
+                                <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </state>
+                            <connections>
+                                <action selector="captureButton:" destination="-1" eventType="touchUpInside" id="o9l-W6-3H7"/>
+                            </connections>
+                        </button>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GVI-ON-Zey" userLabel="Adjust Bar">
+                            <rect key="frame" x="0.0" y="559" width="375" height="44"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PQ4-Cx-wki">
+                                    <rect key="frame" x="295" y="0.0" width="80" height="44"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="80" id="F6z-Er-4iL"/>
+                                    </constraints>
+                                    <fontDescription key="fontDescription" name="DINAlternate-Bold" family="DIN Alternate" pointSize="15"/>
+                                    <state key="normal" title="关闭捕捉">
+                                        <color key="titleColor" red="0.96862745100000003" green="0.76078431369999999" blue="0.15686274510000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <color key="titleShadowColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="borderDetectToggle:" destination="-1" eventType="touchUpInside" id="Oa8-xK-7qy"/>
+                                    </connections>
+                                </button>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MW8-dX-YJM">
+                                    <rect key="frame" x="0.0" y="0.0" width="80" height="44"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="80" id="XoH-eH-7C0"/>
+                                    </constraints>
+                                    <fontDescription key="fontDescription" name="DINAlternate-Bold" family="DIN Alternate" pointSize="15"/>
+                                    <state key="normal" title="闪光灯开">
+                                        <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <color key="titleShadowColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="torchToggle:" destination="-1" eventType="touchUpInside" id="umy-tc-mCl"/>
+                                    </connections>
+                                </button>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="捕捉中..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="djm-ur-fc4">
+                                    <rect key="frame" x="88" y="12" width="199" height="21"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="21" id="P0P-Jr-HJf"/>
+                                    </constraints>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.41999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                            <constraints>
+                                <constraint firstItem="MW8-dX-YJM" firstAttribute="top" secondItem="GVI-ON-Zey" secondAttribute="top" id="01N-lD-ECz"/>
+                                <constraint firstItem="MW8-dX-YJM" firstAttribute="leading" secondItem="GVI-ON-Zey" secondAttribute="leading" id="1Rc-gs-wEg"/>
+                                <constraint firstAttribute="bottom" secondItem="MW8-dX-YJM" secondAttribute="bottom" id="6md-2T-Wm2"/>
+                                <constraint firstItem="djm-ur-fc4" firstAttribute="centerY" secondItem="GVI-ON-Zey" secondAttribute="centerY" id="Fdi-W8-Ynf"/>
+                                <constraint firstItem="PQ4-Cx-wki" firstAttribute="top" secondItem="GVI-ON-Zey" secondAttribute="top" id="H4l-3J-sfw"/>
+                                <constraint firstAttribute="bottom" secondItem="PQ4-Cx-wki" secondAttribute="bottom" id="VXv-ic-QTS"/>
+                                <constraint firstItem="PQ4-Cx-wki" firstAttribute="leading" secondItem="djm-ur-fc4" secondAttribute="trailing" constant="8" id="pWW-aV-nMW"/>
+                                <constraint firstAttribute="trailing" secondItem="PQ4-Cx-wki" secondAttribute="trailing" id="qeR-OE-jtv"/>
+                                <constraint firstItem="djm-ur-fc4" firstAttribute="leading" secondItem="MW8-dX-YJM" secondAttribute="trailing" constant="8" id="tcI-fs-j5Y"/>
+                                <constraint firstAttribute="height" constant="44" id="vBa-Y3-nBw"/>
+                            </constraints>
+                        </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wMD-M8-us5">
+                            <rect key="frame" x="15" y="16" width="345" height="543"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstItem="wMD-M8-us5" firstAttribute="top" secondItem="h0d-vE-OCq" secondAttribute="top" constant="16" id="TtJ-MI-7bw"/>
+                        <constraint firstAttribute="bottom" secondItem="GVI-ON-Zey" secondAttribute="bottom" id="ZLg-qe-Nw6"/>
+                        <constraint firstItem="GVI-ON-Zey" firstAttribute="top" secondItem="wMD-M8-us5" secondAttribute="bottom" id="eBG-6U-dvV"/>
+                        <constraint firstItem="sI0-3p-uvF" firstAttribute="top" secondItem="h0d-vE-OCq" secondAttribute="top" id="fcU-gO-psc"/>
+                        <constraint firstItem="2ET-B9-DKG" firstAttribute="centerX" secondItem="h0d-vE-OCq" secondAttribute="centerX" id="gQN-P6-sfu"/>
+                        <constraint firstAttribute="bottom" secondItem="2ET-B9-DKG" secondAttribute="bottom" constant="54" id="lfG-Xf-fF5"/>
+                        <constraint firstAttribute="trailing" secondItem="wMD-M8-us5" secondAttribute="trailing" constant="15" id="nFH-9L-3hu"/>
+                        <constraint firstAttribute="trailing" secondItem="GVI-ON-Zey" secondAttribute="trailing" id="oXd-eB-Igr"/>
+                        <constraint firstItem="GVI-ON-Zey" firstAttribute="leading" secondItem="h0d-vE-OCq" secondAttribute="leading" id="qBA-Jz-PQW"/>
+                        <constraint firstItem="sI0-3p-uvF" firstAttribute="leading" secondItem="h0d-vE-OCq" secondAttribute="leading" id="sy9-kO-CvS"/>
+                        <constraint firstItem="wMD-M8-us5" firstAttribute="leading" secondItem="h0d-vE-OCq" secondAttribute="leading" constant="15" id="y12-gK-De0"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="h0d-vE-OCq" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="64" id="2kO-YR-8xV"/>
+                <constraint firstItem="h0d-vE-OCq" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="8RW-uB-lVa"/>
+                <constraint firstAttribute="bottom" secondItem="h0d-vE-OCq" secondAttribute="bottom" id="BH6-Bj-OrO"/>
+                <constraint firstAttribute="trailing" secondItem="h0d-vE-OCq" secondAttribute="trailing" id="iFw-Km-fJF"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <point key="canvasLocation" x="-554" y="-180"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="capture_button" width="66" height="66"/>
+        <image name="focusIndicator" width="75" height="75"/>
+    </resources>
+</document>

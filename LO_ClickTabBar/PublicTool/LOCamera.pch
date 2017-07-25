@@ -1,0 +1,22 @@
+//
+//  LOCamera.pch
+//  LO_ClickTabBar
+//
+//  Created by ejt_ios on 2017/6/19.
+//  Copyright © 2017年 ejt_ios. All rights reserved.
+//
+
+#ifndef LOCamera_pch
+#define LOCamera_pch
+
+#import "LODefine.h"
+#import "UIViewController+Helper.h"
+#import "NSString+CachePath.h"
+#import "UIViewController+HUD.h"
+#import "UIColor+LOColor.h"
+
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#endif /* LOCamera_pch */
