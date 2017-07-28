@@ -17,6 +17,11 @@
 
 @interface IPDFCameraViewController () <AVCaptureVideoDataOutputSampleBufferDelegate>
 
+{
+    CGFloat imageW;
+    CGFloat imageH;
+}
+
 @property (nonatomic,strong) AVCaptureSession *captureSession;
 @property (nonatomic,strong) AVCaptureDevice *captureDevice;
 @property (nonatomic,strong) EAGLContext *context;
@@ -72,10 +77,13 @@
     if (self.context) return;
     
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+    
+    
     GLKView *view = [[GLKView alloc] initWithFrame:self.bounds];
     view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     view.translatesAutoresizingMaskIntoConstraints = YES;
     view.context = self.context;
+    view.backgroundColor = [UIColor clearColor];
     view.contentScaleFactor = 1.0f;
     view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
     [self insertSubview:view atIndex:0];
@@ -146,6 +154,7 @@
     UIBlurEffect * effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
     UIVisualEffectView *viewWithBlurredBackground =[[UIVisualEffectView alloc] initWithEffect:effect];
     viewWithBlurredBackground.frame = self.bounds;
+    viewWithBlurredBackground.backgroundColor = [UIColor clearColor];
     [self insertSubview:viewWithBlurredBackground aboveSubview:_glkView];
     
     _cameraViewType = cameraViewType;
@@ -166,6 +175,8 @@
     
     CIImage *image = [CIImage imageWithCVPixelBuffer:pixelBuffer];
     
+    
+    
     if (self.cameraViewType != IPDFCameraViewTypeNormal)
     {
         image = [self filteredImageUsingEnhanceFilterOnImage:image];
@@ -174,6 +185,8 @@
     {
         image = [self filteredImageUsingContrastFilterOnImage:image];
     }
+    
+    
     
     if (self.isBorderDetectionEnabled)
     {
@@ -187,18 +200,57 @@
         {
             _imageDedectionConfidence += .5;
             
+            
+            
             image = [self drawHighlightOverlayForPoints:image topLeft:_borderDetectLastRectangleFeature.topLeft topRight:_borderDetectLastRectangleFeature.topRight bottomLeft:_borderDetectLastRectangleFeature.bottomLeft bottomRight:_borderDetectLastRectangleFeature.bottomRight];
             
            
+           
+//            _downLeft = bottomLeft;  // 上右
+//            _downRight = bottomRight; // 下右
+//            _topLeft = topLeft; // 上左
+//            _topRight = topRight; //下左
             
-           int caha = fabs(_topLeft.x -_topRight.x);
-            NSLog(@"---%f---%f",_topLeft.x,_topRight.x);
-            NSLog(@"----%d",caha);
-            //_downLeft.x
-            // _downRight.x 左
-            if (_imageDedectionConfidence>20.0 && caha<110) {
+            imageW = fabsf(_downLeft.x-_topLeft.x);
+            imageH = fabsf(_downRight.y-_downLeft.y);
+            
+            
+            
+            CGFloat whScale = imageH/imageW;
+            NSLog(@"w = %f ,h = %f,",scaleA3,whScale);
+            
+            CGFloat jumpScale = 0.0f;
+            if (_imageDedectionConfidence>10.0 && (image.extent.size.width-imageW) <= 250) {
                 
-                [_delegate capPhoto];
+                switch (_sizeScale) {
+                    case IPDFSizeA3Scale:
+                        jumpScale = whScale-scaleA3;
+                        break;
+                    case IPDFSizeA4Scale:
+                        jumpScale = whScale-scaleA4;
+                        break;
+                    case IPDFSizeA5Scale:
+                        jumpScale = whScale-scaleA5;
+                        break;
+                    case IPDFSizeSquareScale:
+                        jumpScale = whScale-scaleSquare;
+                        break;
+                        
+                    default:
+                        jumpScale = 0.05;
+                        break;
+                }
+                
+                if ( fabsf((float)jumpScale) <= 0.08 ) {
+                    
+                    NSLog(@"%@--%@",NSStringFromCGPoint(_downLeft),NSStringFromCGPoint(_downRight));
+                    
+                    self.forceStop = YES;
+                    [_borderDetectTimeKeeper invalidate];
+                    [_delegate capPhoto];
+                }
+               
+
             }
             
         }
@@ -216,15 +268,128 @@
     }
 }
 
+- (void)captureImageWithCompletionHander:(void(^)(id data))completionHandler
+{
+    if (_isCapturing) return;
+    
+    __weak typeof(self) weakSelf = self;
+    
+    [weakSelf hideGLKView:YES completion:^
+     {
+         [weakSelf hideGLKView:NO completion:^
+          {
+              [weakSelf hideGLKView:YES completion:nil];
+          }];
+     }];
+    
+    _isCapturing = YES;
+    
+    AVCaptureConnection *videoConnection = nil;
+    for (AVCaptureConnection *connection in self.stillImageOutput.connections)
+    {
+        for (AVCaptureInputPort *port in [connection inputPorts])
+        {
+            if ([[port mediaType] isEqual:AVMediaTypeVideo] )
+            {
+                videoConnection = connection;
+                break;
+            }
+        }
+        if (videoConnection) break;
+    }
+    
+    [self.stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error)
+     {
+         NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
+         
+         if (weakSelf.cameraViewType == IPDFCameraViewTypeBlackAndWhite || weakSelf.isBorderDetectionEnabled)
+         {
+             CIImage *enhancedImage = [CIImage imageWithData:imageData];
+             
+             UIImage *img = [UIImage imageWithData:imageData];
+             UIImageOrientation oldOrientation = img.imageOrientation;
+             
+             
+             
+             
+             if (weakSelf.cameraViewType == IPDFCameraViewTypeBlackAndWhite)
+             {
+                 enhancedImage = [self filteredImageUsingEnhanceFilterOnImage:enhancedImage];
+             }
+             else
+             {
+                 enhancedImage = [self filteredImageUsingContrastFilterOnImage:enhancedImage];
+             }
+             
+             if (weakSelf.isBorderDetectionEnabled && rectangleDetectionConfidenceHighEnough(_imageDedectionConfidence))
+             {
+                 _imageDedectionConfidence = 0.0f;
+                 
+                 CIDetector *tector = [self highAccuracyRectangleDetector];
+                 NSArray *arr = [tector featuresInImage:enhancedImage];
+                 
+                 CIRectangleFeature *rectangleFeature = [self biggestRectangleInRectangles:arr];
+                 
+                 if (rectangleFeature)
+                 {
+                     enhancedImage = [self correctPerspectiveForImage:enhancedImage withFeatures:rectangleFeature];
+                     isRote = YES;
+                 }
+             }
+             
+             
+             if (fabsf(_downRight.y)  > fabsf(_downLeft.y)) {
+                 if (fabsf(_downLeft.x) < fabsf(_downRight.x)) {
+                     
+                     
+                     if(fabsf(_downRight.x) - fabsf(_downLeft.x) >= 10)
+                         oldOrientation = UIImageOrientationLeft;
+                 }
+             }
+             
+             UIGraphicsBeginImageContext(CGSizeMake(enhancedImage.extent.size.height, enhancedImage.extent.size.width));
+             [[UIImage imageWithCIImage:enhancedImage scale:1.0 orientation:UIImageOrientationRight] drawInRect:CGRectMake(0,0, enhancedImage.extent.size.height, enhancedImage.extent.size.width)];
+             UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+             UIGraphicsEndImageContext();
+             
+             
+             
+             [weakSelf hideGLKView:NO completion:nil];
+             if (isRote) {
+                 
+                 //  UIImageOrientation imgOrientation = UIImageOrientationLeft;
+                 
+                 if (_downLeft.y>_downRight.y) {
+                     //imgOrientation = UIImageOrientationRight;
+                 }
+                 image = [self image:image rotation:oldOrientation];
+                 isRote = NO;
+             }
+             
+             completionHandler(image);
+         }
+         else
+         {
+             [weakSelf hideGLKView:NO completion:nil];
+             completionHandler(imageData);
+         }
+         
+         _isCapturing = NO;
+     }];
+}
+
+
 - (void)enableBorderDetectFrame
 {
     _borderDetectFrame = YES;
 }
 
+// 生成捕捉到颜色块
 - (CIImage *)drawHighlightOverlayForPoints:(CIImage *)image topLeft:(CGPoint)topLeft topRight:(CGPoint)topRight bottomLeft:(CGPoint)bottomLeft bottomRight:(CGPoint)bottomRight
 {
     int caha = fabs(_topLeft.x -_topRight.x);
     CIImage *overlay = nil;
+    
     if (caha <110) {
         overlay = [CIImage imageWithColor:[CIColor colorWithRed:0.0 green:0.8 blue:0.0 alpha:0.4]];
     } else {
@@ -235,18 +400,36 @@
     
     
     
+    // 增加边框 生成边框的宽度 w = image.width + 2*borderW 高度同理
+    // 开启上下文
+    CGSize size = CGSizeMake(image.extent.size.width + 2 * 1.0, image.extent.size.height + 2 * 1.0);
+    UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+    
+    
+    [[UIColor redColor] set];
+    
+    
+    
+    // 画图
+    [[UIImage imageWithCIImage:image] drawAtPoint:CGPointMake(1.0, 1.0)];
+    
+    UIImage *newImage =  UIGraphicsGetImageFromCurrentImageContext();
+    
+    overlay = newImage.CIImage;
+    
+    UIGraphicsEndImageContext();
+    
+    
     overlay = [overlay imageByCroppingToRect:image.extent];
    
     
     overlay = [overlay imageByApplyingFilter:@"CIPerspectiveTransformWithExtent" withInputParameters:@{@"inputExtent":[CIVector vectorWithCGRect:image.extent],@"inputTopLeft":[CIVector vectorWithCGPoint:topLeft],@"inputTopRight":[CIVector vectorWithCGPoint:topRight],@"inputBottomLeft":[CIVector vectorWithCGPoint:bottomLeft],@"inputBottomRight":[CIVector vectorWithCGPoint:bottomRight]}];
     
-    _downLeft = bottomLeft;
-    _downRight = bottomRight;
-    _topLeft = topLeft;
-    _topRight = topRight;
+    _downLeft = bottomLeft;  // 上右
+    _downRight = bottomRight; // 下右
+    _topLeft = topLeft; // 上左
+    _topRight = topRight; //下左
     
-    NSLog(@"--topLeftx = %f --dtopLefty = %f",_topLeft.x,_topLeft.y);
-    NSLog(@"--topRx = %f --topRy = %f",_topRight.x,_topRight.y);
     
     return [overlay imageByCompositingOverImage:image];
     
@@ -256,16 +439,17 @@
 - (void)start
 {
     _isStopped = NO;
-    
+    _forceStop = NO;
     [self.captureSession startRunning];
     
-    _borderDetectTimeKeeper = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(enableBorderDetectFrame) userInfo:nil repeats:YES];
+    _borderDetectTimeKeeper = [NSTimer scheduledTimerWithTimeInterval:0.6 target:self selector:@selector(enableBorderDetectFrame) userInfo:nil repeats:YES];
     [self hideGLKView:NO completion:nil];
 }
 
 - (void)stop
 {
     _isStopped = YES;
+    _forceStop = YES;
     _imageDedectionConfidence = 0.0f;
     [self.captureSession stopRunning];
     
@@ -310,6 +494,9 @@
             {
                 [device setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
                 [device setFocusPointOfInterest:pointOfInterest];
+                //[device setFocusModeLockedWithLensPosition:<#(float)#> completionHandler:^(CMTime syncTime) {
+                    
+                //}];
             }
             
             if([device isExposurePointOfInterestSupported] && [device isExposureModeSupported:AVCaptureExposureModeContinuousAutoExposure])
@@ -328,104 +515,6 @@
     }
 }
 
-- (void)captureImageWithCompletionHander:(void(^)(id data))completionHandler
-{
-    if (_isCapturing) return;
-    
-    __weak typeof(self) weakSelf = self;
-    
-    [weakSelf hideGLKView:YES completion:^
-    {
-        [weakSelf hideGLKView:NO completion:^
-        {
-            [weakSelf hideGLKView:YES completion:nil];
-        }];
-    }];
-    
-    _isCapturing = YES;
-    
-    AVCaptureConnection *videoConnection = nil;
-    for (AVCaptureConnection *connection in self.stillImageOutput.connections)
-    {
-        for (AVCaptureInputPort *port in [connection inputPorts])
-        {
-            if ([[port mediaType] isEqual:AVMediaTypeVideo] )
-            {
-                videoConnection = connection;
-                break;
-            }
-        }
-        if (videoConnection) break;
-    }
-    
-    [self.stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error)
-     {
-         NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
-         
-         if (weakSelf.cameraViewType == IPDFCameraViewTypeBlackAndWhite || weakSelf.isBorderDetectionEnabled)
-         {
-             CIImage *enhancedImage = [CIImage imageWithData:imageData];
-            
-             UIImage *img = [UIImage imageWithData:imageData];
-             UIImageOrientation oldOrientation = img.imageOrientation;
-             
-            
-             
-             
-             if (weakSelf.cameraViewType == IPDFCameraViewTypeBlackAndWhite)
-             {
-                 enhancedImage = [self filteredImageUsingEnhanceFilterOnImage:enhancedImage];
-             }
-             else
-             {
-                 enhancedImage = [self filteredImageUsingContrastFilterOnImage:enhancedImage];
-             }
-             
-             if (weakSelf.isBorderDetectionEnabled && rectangleDetectionConfidenceHighEnough(_imageDedectionConfidence))
-             {
-                 _imageDedectionConfidence = 0.0f;
-                 
-                 CIRectangleFeature *rectangleFeature = [self biggestRectangleInRectangles:[[self highAccuracyRectangleDetector] featuresInImage:enhancedImage]];
-                 
-                 if (rectangleFeature)
-                 {
-                     enhancedImage = [self correctPerspectiveForImage:enhancedImage withFeatures:rectangleFeature];
-                     isRote = YES;
-                 }
-             }
-             
-             UIGraphicsBeginImageContext(CGSizeMake(enhancedImage.extent.size.height, enhancedImage.extent.size.width));
-             [[UIImage imageWithCIImage:enhancedImage scale:1.0 orientation:UIImageOrientationRight] drawInRect:CGRectMake(0,0, enhancedImage.extent.size.height, enhancedImage.extent.size.width)];
-             UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-             UIGraphicsEndImageContext();
-             
-             
-             NSLog(@"left = %@",NSStringFromCGPoint(_downLeft));
-             NSLog(@"right = %@",NSStringFromCGPoint(_downRight));
-             
-             [weakSelf hideGLKView:NO completion:nil];
-             if (isRote) {
-                 
-               //  UIImageOrientation imgOrientation = UIImageOrientationLeft;
-                 
-                 if (_downLeft.y>_downRight.y) {
-                     //imgOrientation = UIImageOrientationRight;
-                 }
-                 image = [self image:image rotation:oldOrientation];
-                 isRote = NO;
-             }
-             
-             completionHandler(image);
-         }
-         else
-         {
-             [weakSelf hideGLKView:NO completion:nil];
-             completionHandler(imageData);
-         }
-         
-         _isCapturing = NO;
-     }];
-}
 
 - (UIImage *)image:(UIImage *)image rotation:(UIImageOrientation)orientation
 {

@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
+static const CGFloat scaleA3 = 420.0/297.0;
+static const CGFloat scaleA4 = 297.0/210.0;
+static const CGFloat scaleA5 = 210.0/148.0;
+static const CGFloat scaleSquare = 1.0;
+
 typedef NS_ENUM(NSInteger,IPDFCameraViewType)
 {
     IPDFCameraViewTypeBlackAndWhite,
@@ -15,6 +20,14 @@ typedef NS_ENUM(NSInteger,IPDFCameraViewType)
     
 };
 
+typedef NS_ENUM(NSInteger , IPDFSizeScale)
+{
+    IPDFSizeA3Scale, // A3
+    IPDFSizeA4Scale, // A4
+    IPDFSizeA5Scale, // A5
+    IPDFSizeSquareScale, // 正方形
+    IPDFSizeOtherScale // 随意
+};
 
 @protocol IPDFCameraViewControllerDelegate <NSObject>
 
@@ -40,6 +53,7 @@ typedef NS_ENUM(NSInteger,IPDFCameraViewType)
 @property (nonatomic,assign,getter=isTorchEnabled) BOOL enableTorch;
 
 @property (nonatomic,assign) IPDFCameraViewType cameraViewType;
+@property (nonatomic,assign) IPDFSizeScale sizeScale;
 
 - (void)focusAtPoint:(CGPoint)point completionHandler:(void(^)())completionHandler;
 

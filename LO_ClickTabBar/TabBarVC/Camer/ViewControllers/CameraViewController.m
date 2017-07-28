@@ -53,7 +53,7 @@
 - (void) viewWillAppear:(BOOL)animated
 {
     if (self.cameraViewController) {
-        [self.cameraViewController start];
+       // [self.cameraViewController start];
         _lblTs.text = @"捕捉中...";
         
         __weak typeof(self) weakSelf = self;
@@ -72,6 +72,8 @@
     
     [super viewDidLoad];
     
+    //self.navigationController.navigationBarHidden = YES;
+    
     UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     backBtn.frame = CGRectMake(0, 0, 20, 30 );
     [backBtn setImage:[UIImage imageNamed:@"backs"] forState:UIControlStateNormal];
@@ -79,7 +81,7 @@
     [backBtn setImage:nil forState:UIControlStateHighlighted];
     backBtn.imageEdgeInsets = UIEdgeInsetsMake(0, -10, 0, 0);
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backBtn];
-
+     
     
     rightBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 60, 30)];
     [rightBtn setTitle:@"黑白色" forState:UIControlStateNormal];
@@ -109,6 +111,7 @@
     [self.cameraViewController setupCameraView];
     [self.cameraViewController setEnableBorderDetection:YES];
     [self.cameraViewController setCameraViewType:IPDFCameraViewTypeNormal];
+    [self.cameraViewController setSizeScale:IPDFSizeA4Scale];
     
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(focusGesture:)];
     

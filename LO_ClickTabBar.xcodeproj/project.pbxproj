@@ -1162,7 +1162,7 @@
 				DEVELOPMENT_TEAM = 75X3SAH33K;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = /Users/ejt_ios/Desktop/LO_ClickTabBar/LO_ClickTabBar/PublicTool/LOCamera.pch;
+				GCC_PREFIX_HEADER = /Users/ejt_ios/Desktop/LO_ClickTabBar/MyOCR/LO_ClickTabBar/PublicTool/LOCamera.pch;
 				INFOPLIST_FILE = LO_ClickTabBar/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1179,7 +1179,7 @@
 				DEVELOPMENT_TEAM = 75X3SAH33K;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = /Users/ejt_ios/Desktop/LO_ClickTabBar/LO_ClickTabBar/PublicTool/LOCamera.pch;
+				GCC_PREFIX_HEADER = /Users/ejt_ios/Desktop/LO_ClickTabBar/MyOCR/LO_ClickTabBar/PublicTool/LOCamera.pch;
 				INFOPLIST_FILE = LO_ClickTabBar/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
