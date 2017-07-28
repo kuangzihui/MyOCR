@@ -48,6 +48,7 @@ typedef NS_ENUM(NSInteger , IPDFSizeScale)
 @property (nonatomic , assign) CGPoint topRight;
 @property (nonatomic , assign) CGPoint downLeft;
 @property (nonatomic , assign) CGPoint downRight;
+@property (nonatomic , assign) CGRect imageRect;
 @property (nonatomic ,assign) id<IPDFCameraViewControllerDelegate> delegate;
 @property (nonatomic,assign,getter=isBorderDetectionEnabled) BOOL enableBorderDetection;
 @property (nonatomic,assign,getter=isTorchEnabled) BOOL enableTorch;

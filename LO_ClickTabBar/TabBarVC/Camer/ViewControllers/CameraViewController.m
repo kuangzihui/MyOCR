@@ -246,7 +246,21 @@
              CGFloat cropH = _borderView.frame.size.height *hbl;
              
              image = [image croppedImageWithFrame:CGRectMake(cropX, cropY, image.size.width-(cropX*2), cropH) angle:0 circularClip:NO];
-         }
+         } /*else {
+             
+             
+             CGFloat wbl =  image.size.width/SCREEN_WIDTH;
+             CGFloat hbl =  image.size.height/(SCREEN_HEIGHT-64);
+             
+             CGFloat cropX = _cameraViewController.imageRect.origin.x/2 *wbl;
+             CGFloat cropY = _cameraViewController.imageRect.origin.y/2 *hbl;
+             CGFloat cropH = _cameraViewController.imageRect.size.height/2 *hbl;
+             
+             image = [image croppedImageWithFrame:CGRectMake(cropX, cropY, image.size.width-(cropX*2), cropH) angle:0 circularClip:NO];
+             
+             NSLog(@"%@-",NSStringFromCGRect(_cameraViewController.imageRect));
+            // image = [image croppedImageWithFrame:_cameraViewController.imageRect angle:0 circularClip:NO];
+         }*/
          
          // [self saveImageToPhotos:image];
          

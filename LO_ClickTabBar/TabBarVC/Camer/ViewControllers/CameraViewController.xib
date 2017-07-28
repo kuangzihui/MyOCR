@@ -26,26 +26,6 @@
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="h0d-vE-OCq" customClass="IPDFCameraViewController">
                     <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                     <subviews>
-                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="focusIndicator" translatesAutoresizingMaskIntoConstraints="NO" id="sI0-3p-uvF">
-                            <rect key="frame" x="0.0" y="0.0" width="75" height="75"/>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="75" id="9fE-6m-D5Y"/>
-                                <constraint firstAttribute="width" constant="75" id="EnL-Fd-uwB"/>
-                            </constraints>
-                        </imageView>
-                        <button opaque="NO" alpha="0.69999998807907104" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2ET-B9-DKG">
-                            <rect key="frame" x="154" y="483" width="66" height="66"/>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="66" id="2hw-CE-yEl"/>
-                                <constraint firstAttribute="width" constant="66" id="kuQ-Jr-FLj"/>
-                            </constraints>
-                            <state key="normal" image="capture_button">
-                                <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            </state>
-                            <connections>
-                                <action selector="captureButton:" destination="-1" eventType="touchUpInside" id="o9l-W6-3H7"/>
-                            </connections>
-                        </button>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GVI-ON-Zey" userLabel="Adjust Bar">
                             <rect key="frame" x="0.0" y="559" width="375" height="44"/>
                             <subviews>
@@ -101,10 +81,30 @@
                                 <constraint firstAttribute="height" constant="44" id="vBa-Y3-nBw"/>
                             </constraints>
                         </view>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="focusIndicator" translatesAutoresizingMaskIntoConstraints="NO" id="sI0-3p-uvF">
+                            <rect key="frame" x="0.0" y="0.0" width="75" height="75"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="75" id="9fE-6m-D5Y"/>
+                                <constraint firstAttribute="width" constant="75" id="EnL-Fd-uwB"/>
+                            </constraints>
+                        </imageView>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wMD-M8-us5">
                             <rect key="frame" x="15" y="16" width="345" height="543"/>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         </view>
+                        <button opaque="NO" alpha="0.69999998807907104" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2ET-B9-DKG">
+                            <rect key="frame" x="154" y="483" width="66" height="66"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="66" id="2hw-CE-yEl"/>
+                                <constraint firstAttribute="width" constant="66" id="kuQ-Jr-FLj"/>
+                            </constraints>
+                            <state key="normal" image="capture_button">
+                                <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </state>
+                            <connections>
+                                <action selector="captureButton:" destination="-1" eventType="touchUpInside" id="o9l-W6-3H7"/>
+                            </connections>
+                        </button>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <constraints>

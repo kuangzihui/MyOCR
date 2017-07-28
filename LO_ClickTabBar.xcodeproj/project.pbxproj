@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FE0BBA021F2AE432005C0EDB /* ocr29.png in Resources */ = {isa = PBXBuildFile; fileRef = FE0BBA011F2AE432005C0EDB /* ocr29.png */; };
 		FE17043B1EFA105100D8689C /* UIFont+size.m in Sources */ = {isa = PBXBuildFile; fileRef = FE17043A1EFA105100D8689C /* UIFont+size.m */; };
 		FE53B5731F05F8C000BE74AB /* PhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FE53B5711F05F8C000BE74AB /* PhotoCell.m */; };
 		FE53B5741F05F8C000BE74AB /* PhotoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FE53B5721F05F8C000BE74AB /* PhotoCell.xib */; };
@@ -111,6 +112,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		FE0BBA011F2AE432005C0EDB /* ocr29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ocr29.png; path = ../../../../../../../Downloads/ocr29.png; sourceTree = "<group>"; };
 		FE1704391EFA105100D8689C /* UIFont+size.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIFont+size.h"; sourceTree = "<group>"; };
 		FE17043A1EFA105100D8689C /* UIFont+size.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+size.m"; sourceTree = "<group>"; };
 		FE53B5701F05F8C000BE74AB /* PhotoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoCell.h; sourceTree = "<group>"; };
@@ -445,6 +447,7 @@
 		FEA75EAF1EF772F100A41F79 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				FE0BBA011F2AE432005C0EDB /* ocr29.png */,
 				FEA75ED31EF7A68700A41F79 /* LMJScrollTextView.h */,
 				FEA75ED41EF7A68700A41F79 /* LMJScrollTextView.m */,
 				FEA75ED51EF7A68700A41F79 /* IPDFCameraViewController.h */,
@@ -886,6 +889,7 @@
 				FEEFB9FF1EF8DC0D0053E063 /* FSActionSheet_cancel@3x.png in Resources */,
 				FEEFBA2E1EF8DC2B0053E063 /* LICENSE in Resources */,
 				FEA75F031EF7A69500A41F79 /* TOCropViewControllerLocalizable.strings in Resources */,
+				FE0BBA021F2AE432005C0EDB /* ocr29.png in Resources */,
 				FE739EB61EE5456C00E55DD5 /* Main.storyboard in Resources */,
 				FEA75ED21EF7A67A00A41F79 /* CameraViewController.xib in Resources */,
 				FEA75F231EF7CC4400A41F79 /* TableViewHeadView.xib in Resources */,

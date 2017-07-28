@@ -18,6 +18,7 @@
 @interface IPDFCameraViewController () <AVCaptureVideoDataOutputSampleBufferDelegate>
 
 {
+    
     CGFloat imageW;
     CGFloat imageH;
 }
@@ -76,9 +77,8 @@
 {
     if (self.context) return;
     
+    
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-    
-    
     GLKView *view = [[GLKView alloc] initWithFrame:self.bounds];
     view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     view.translatesAutoresizingMaskIntoConstraints = YES;
@@ -204,17 +204,18 @@
             
             image = [self drawHighlightOverlayForPoints:image topLeft:_borderDetectLastRectangleFeature.topLeft topRight:_borderDetectLastRectangleFeature.topRight bottomLeft:_borderDetectLastRectangleFeature.bottomLeft bottomRight:_borderDetectLastRectangleFeature.bottomRight];
             
-           
+            
            
 //            _downLeft = bottomLeft;  // 上右
 //            _downRight = bottomRight; // 下右
 //            _topLeft = topLeft; // 上左
 //            _topRight = topRight; //下左
             
-            imageW = fabsf(_downLeft.x-_topLeft.x);
-            imageH = fabsf(_downRight.y-_downLeft.y);
+           // imageW = fabsf((float)(_downLeft.x-_topLeft.x));
+            //imageH = fabsf((float)(_downRight.y-_downLeft.y));
             
-            
+            imageW = _imageRect.size.width;
+            imageH = _imageRect.size.height;
             
             CGFloat whScale = imageH/imageW;
             NSLog(@"w = %f ,h = %f,",scaleA3,whScale);
@@ -327,7 +328,6 @@
                  
                  CIDetector *tector = [self highAccuracyRectangleDetector];
                  NSArray *arr = [tector featuresInImage:enhancedImage];
-                 
                  CIRectangleFeature *rectangleFeature = [self biggestRectangleInRectangles:arr];
                  
                  if (rectangleFeature)
@@ -338,12 +338,12 @@
              }
              
              
-             if (fabsf(_downRight.y)  > fabsf(_downLeft.y)) {
-                 if (fabsf(_downLeft.x) < fabsf(_downRight.x)) {
-                     
-                     
-                     if(fabsf(_downRight.x) - fabsf(_downLeft.x) >= 10)
+             if (fabsf((float)_downRight.y)  > fabsf((float)_downLeft.y)) {
+                 if (fabsf((float)_downLeft.x) < fabsf((float)_downRight.x)) {
+                     if(fabsf((float)_downRight.x) - fabsf((float)_downLeft.x) >= 10)
                          oldOrientation = UIImageOrientationLeft;
+                 } else if (fabsf((float)_downRight.x) - fabsf((float)_downRight.x) <= 5) {
+                     oldOrientation = UIImageOrientationLeft;
                  }
              }
              
@@ -356,12 +356,7 @@
              
              [weakSelf hideGLKView:NO completion:nil];
              if (isRote) {
-                 
-                 //  UIImageOrientation imgOrientation = UIImageOrientationLeft;
-                 
-                 if (_downLeft.y>_downRight.y) {
-                     //imgOrientation = UIImageOrientationRight;
-                 }
+
                  image = [self image:image rotation:oldOrientation];
                  isRote = NO;
              }
@@ -394,45 +389,74 @@
         overlay = [CIImage imageWithColor:[CIColor colorWithRed:0.0 green:0.8 blue:0.0 alpha:0.4]];
     } else {
         _imageDedectionConfidence = 0;
-         overlay = [CIImage imageWithColor:[CIColor colorWithRed:0.8 green:0.0 blue:0.0 alpha:0.5]];
+       
+         overlay = [CIImage imageWithColor:[CIColor colorWithRed:0.8 green:0.0 blue:0.0 alpha:0.4]];
     }
+   
+    //overlay = [CIImage imageWithCGImage:[UIImage imageNamed:@"ocr29"].CGImage];
     
-    
-    
-    
-    // 增加边框 生成边框的宽度 w = image.width + 2*borderW 高度同理
-    // 开启上下文
-    CGSize size = CGSizeMake(image.extent.size.width + 2 * 1.0, image.extent.size.height + 2 * 1.0);
-    UIGraphicsBeginImageContextWithOptions(size, NO, 0);
-    
-    
-    [[UIColor redColor] set];
-    
-    
-    
-    // 画图
-    [[UIImage imageWithCIImage:image] drawAtPoint:CGPointMake(1.0, 1.0)];
-    
-    UIImage *newImage =  UIGraphicsGetImageFromCurrentImageContext();
-    
-    overlay = newImage.CIImage;
-    
-    UIGraphicsEndImageContext();
-    
+    //overlay = [CIImage imageWithColor:[UIColor clearColor].CIColor];
     
     overlay = [overlay imageByCroppingToRect:image.extent];
    
     
     overlay = [overlay imageByApplyingFilter:@"CIPerspectiveTransformWithExtent" withInputParameters:@{@"inputExtent":[CIVector vectorWithCGRect:image.extent],@"inputTopLeft":[CIVector vectorWithCGPoint:topLeft],@"inputTopRight":[CIVector vectorWithCGPoint:topRight],@"inputBottomLeft":[CIVector vectorWithCGPoint:bottomLeft],@"inputBottomRight":[CIVector vectorWithCGPoint:bottomRight]}];
     
+    
+    _imageRect = overlay.extent;
+    
+    NSLog(@"overlay = %@",NSStringFromCGRect(overlay.extent));
+    
+    //UIImage *newImg = [self addBpolygonToImage:[UIImage imageWithCIImage:overlay] withLineWidth:2.0f andColor:[UIColor redColor]];
+   // CIImage *ciimage = [CIImage imageWithCGImage:newImg.CGImage];
+ 
+    
+   
+
+    
     _downLeft = bottomLeft;  // 上右
     _downRight = bottomRight; // 下右
     _topLeft = topLeft; // 上左
     _topRight = topRight; //下左
     
+    overlay = [overlay imageByCompositingOverImage:image];
+     
     
-    return [overlay imageByCompositingOverImage:image];
+    return overlay;
     
+}
+
+- (UIImage *)addBpolygonToImage:(UIImage *)image withLineWidth:(CGFloat)lineW andColor:(UIColor *)color{
+    //
+    UIGraphicsBeginImageContextWithOptions(image.size, NO, 0.0);
+    //
+    CGContextRef ctx = UIGraphicsGetCurrentContext();
+    //
+    CGRect rect = CGRectMake(0, 0, image.size.width, image.size.height);
+    //
+    CGContextScaleCTM(ctx, 1, -1);
+    CGContextTranslateCTM(ctx, 0, -rect.size.height);
+    //
+    CGFloat lineWidth = lineW;
+    
+    
+    UIBezierPath *path = [UIBezierPath bezierPathWithRect:rect];
+   
+    [path closePath];
+    
+    path.lineWidth = lineWidth;
+    path.lineJoinStyle = kCGLineJoinMiter;
+    [color setStroke];
+    [path stroke];
+    //
+    CGContextSaveGState(ctx);
+    [path addClip];
+    CGContextDrawImage(ctx, rect, image.CGImage);
+    CGContextRestoreGState(ctx);
+    //
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
 }
 
 
@@ -701,6 +725,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^
     {
+        // 矩形检测探测器类型   CIDetectorTypeRectangle
         detector = [CIDetector detectorOfType:CIDetectorTypeRectangle context:nil options:@{CIDetectorAccuracy : CIDetectorAccuracyHigh}];
     });
     return detector;
